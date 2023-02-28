@@ -8,7 +8,12 @@
     "start": "tsc && node dist/src/app.js",
     "lint": "eslint . --ext .ts",
     "devstart": "nodemon ./src/app.ts",
-    "testSocket": "tsc && jest --detectOpenHandles --forceExit --runInBand ./dist/src/tests/socket.test.js"
+    "testSocket": "tsc && jest --detectOpenHandles --forceExit --runInBand ./dist/src/tests/socket.test.js",
+    "testPosts": "tsc && jest --detectOpenHandles --forceExit --runInBand ./dist/src/tests/post.test.js",
+    "testFile": "tsc && jest --detectOpenHandles --forceExit --runInBand ./dist/src/tests/file.test.js",
+    "testAuth": "tsc && jest --detectOpenHandles --forceExit --runInBand ./dist/src/tests/auth.test.js"
+    
+
   },
   "author": "Amit Cohen",
   "license": "ISC",
