@@ -19,40 +19,6 @@ function sendError(res, error) {
         'error': error
     });
 }
-const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = req.body.email;
-    const password = req.body.password;
-    const name = req.body.name;
-    const avatarUrl = req.body.avatarUrl;
-    if (email == null || password == null || name == null || avatarUrl == null) {
-        return sendError(res, 'Please provide valid values');
-    }
-    try {
-        const user = yield user_model_1.default.findOne({ 'email': email });
-        if (user != null) {
-            return sendError(res, 'user already exist');
-        }
-    }
-    catch (err) {
-        console.log("error:" + err);
-        sendError(res, 'fail checking user');
-    }
-    try {
-        const salt = yield bcrypt_1.default.genSalt(10);
-        const encryptedPassword = yield bcrypt_1.default.hash(password, salt);
-        let newUser = new user_model_1.default({
-            'email': email,
-            'name': name,
-            'password': encryptedPassword,
-            'avatarUrl': avatarUrl
-        });
-        newUser = yield newUser.save();
-        res.status(200).send({ newUser });
-    }
-    catch (err) {
-        sendError(res, 'failed.......');
-    }
-});
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const password = req.body.password;
@@ -76,7 +42,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(200).send({
             'accessToken': accessToken,
             'refreshToken': refreshToken,
-            'id': user._id
+            'id': user._id,
+            userType: user.userType,
         });
     }
     catch (err) {
@@ -101,9 +68,24 @@ const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             yield userObj.save();
             return sendError(res, 'fail validating token');
         }
-        const newAccessToken = yield jsonwebtoken_1.default.sign({ 'id': user["id"] }, process.env.ACCESS_TOKEN_SECRET, { 'expiresIn': process.env.JWT_TOKEN_EXPIRATION });
-        const newRefreshToken = yield jsonwebtoken_1.default.sign({ 'id': user["id"] }, process.env.REFRESH_TOKEN_SECRET);
-        userObj.refresh_tokens[userObj.refresh_tokens.indexOf(refreshToken)];
+        let newAccessToken, newRefreshToken;
+        if (userObj.userType === 'hospital') {
+            newAccessToken = yield jsonwebtoken_1.default.sign({ 'id': user["id"] }, process.env.ACCESS_TOKEN_SECRET, { 'expiresIn': process.env.JWT_TOKEN_EXPIRATION });
+            newRefreshToken = yield jsonwebtoken_1.default.sign({ 'id': user["id"] }, process.env.REFRESH_TOKEN_SECRET);
+        }
+        else if (userObj.userType === 'intern') {
+            newAccessToken = yield jsonwebtoken_1.default.sign({
+                'id': user["id"],
+                'educationalInstitution': userObj.educationalInstitution,
+                'typeOfInternship': userObj.typeOfInternship,
+                'GPA': userObj.GPA
+            }, process.env.ACCESS_TOKEN_SECRET, { 'expiresIn': process.env.JWT_TOKEN_EXPIRATION });
+            newRefreshToken = yield jsonwebtoken_1.default.sign({ 'id': user["id"] }, process.env.REFRESH_TOKEN_SECRET);
+        }
+        else {
+            return sendError(res, 'Invalid user type');
+        }
+        userObj.refresh_tokens[userObj.refresh_tokens.indexOf(refreshToken)] = newRefreshToken;
         yield userObj.save();
         return res.status(200).send({
             'accessToken': newAccessToken,
@@ -141,20 +123,95 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers['authorization'];
-    if (authHeader == null)
-        return sendError(res, 'authtentication missing');
+    if (authHeader == null) {
+        return sendError(res, 'Authentication missing');
+    }
+    const tokenType = authHeader.split(' ')[0];
     const token = authHeader.split(' ')[1];
-    if (token == null)
-        return sendError(res, 'authtentication missing');
+    if (token == null) {
+        return sendError(res, 'Authentication missing');
+    }
     try {
-        const user = yield jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.body.userId = user["id"];
+        let user;
+        if (tokenType === 'Bearer') {
+            user = yield jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        }
+        else if (tokenType === 'Refresh') {
+            user = yield jsonwebtoken_1.default.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        }
+        else {
+            return sendError(res, 'Invalid token type');
+        }
+        req.body.userId = user.id;
         console.log("token user:" + user);
         next();
     }
     catch (err) {
-        return sendError(res, 'fail validating token');
+        return sendError(res, 'Failed to validate token');
     }
 });
-module.exports = { login, refresh, register, logout, authenticateMiddleware };
+///////////////////////////////////////////////////////////////////////////
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password, name, phoneNumber, avatarUrl, city, userType, description } = req.body;
+    if (!email || !password || !name || !phoneNumber || !avatarUrl || !city) {
+        return res.status(400).send({ error: "Please provide valid values" });
+    }
+    try {
+        const existingUser = yield user_model_1.default.findOne({ email });
+        if (existingUser) {
+            return res.status(409).send({ error: "User already exists" });
+        }
+        const salt = yield bcrypt_1.default.genSalt(10);
+        const encryptedPassword = yield bcrypt_1.default.hash(password, salt);
+        let user;
+        if (userType === "intern") {
+            const { educationalInstitution, typeOfInternship, GPA } = req.body;
+            if (!educationalInstitution || !typeOfInternship || !GPA) {
+                return res.status(400).send({ error: "Please provide valid values" });
+            }
+            user = new user_model_1.default({
+                email,
+                password: encryptedPassword,
+                name,
+                phoneNumber,
+                avatarUrl,
+                city,
+                userType,
+                educationalInstitution,
+                typeOfInternship,
+                GPA,
+                description,
+                refresh_tokens: [],
+            });
+        }
+        else if (userType === "hospital") {
+            const { hospitalQuantity } = req.body;
+            if (!hospitalQuantity) {
+                return res.status(400).send({ error: "Please provide valid values" });
+            }
+            user = new user_model_1.default({
+                email,
+                password: encryptedPassword,
+                name,
+                phoneNumber,
+                avatarUrl,
+                city,
+                userType,
+                hospitalQuantity,
+                description,
+                refresh_tokens: [],
+            });
+        }
+        else {
+            return res.status(400).send({ error: "Please provide a valid user type" });
+        }
+        yield user.save();
+        res.status(201).send({ message: "User registered successfully" });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to register user" });
+    }
+});
+module.exports = { login, refresh, logout, authenticateMiddleware, register };
 //# sourceMappingURL=auth.js.map

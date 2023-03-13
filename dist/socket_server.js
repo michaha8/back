@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const socket_io_1 = require("socket.io");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const echoHandler_1 = __importDefault(require("./socket/echoHandler"));
-const postHandler_1 = __importDefault(require("./socket/postHandler"));
+const echoHandler_1 = __importDefault(require("./src/socket/echoHandler"));
+const postHandler_1 = __importDefault(require("./src/socket/postHandler"));
 module.exports = (server) => {
     const io = new socket_io_1.Server(server);
     io.use((socket, next) => __awaiter(void 0, void 0, void 0, function* () {

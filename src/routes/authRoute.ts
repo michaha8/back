@@ -70,8 +70,6 @@ import auth from '../controllers/auth'
  *                 description: The error description
  */
 router.post('/register', auth.register)
-
-
 /**
  * @swagger
  * /auth/login:
