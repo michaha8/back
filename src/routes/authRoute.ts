@@ -69,7 +69,8 @@ import auth from '../controllers/auth'
  *                 type: string
  *                 description: The error description
  */
-router.post('/register', auth.register)
+router.post('/registerIntern', auth.registerIntern)
+router.post('/registerHospital', auth.registerHospital)
 /**
  * @swagger
  * /auth/login:

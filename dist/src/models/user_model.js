@@ -6,9 +6,14 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const { ObjectId } = mongoose_1.default.Types;
 const userSchema = new mongoose_1.default.Schema({
     _id: {
-        type: ObjectId,
-        required: true,
-        default: () => new ObjectId(),
+        type: ObjectId
+    },
+    id: {
+        type: String,
+        required: function () {
+            return this.userType === "intern";
+        },
+        maxlength: 8
     },
     email: {
         type: String,
@@ -24,11 +29,14 @@ const userSchema = new mongoose_1.default.Schema({
     },
     phoneNumber: {
         type: String,
-        required: true
+        required: true,
+        maxlength: 10
     },
     avatarUrl: {
         type: String,
-        required: true
+        required: function () {
+            return this.userType === "intern";
+        },
     },
     city: {
         type: String,
@@ -64,11 +72,17 @@ const userSchema = new mongoose_1.default.Schema({
     description: {
         type: String,
         required: false,
-        maxlength: 100,
+        maxlength: 200,
     },
     refresh_tokens: {
         type: [String]
     },
+    partnerID: {
+        type: String,
+        required: function () {
+            return this.userType === "intern";
+        },
+    }
 });
 module.exports = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=user_model.js.map

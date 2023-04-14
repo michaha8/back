@@ -3,9 +3,14 @@ const { ObjectId } = mongoose.Types;
 
 const userSchema = new mongoose.Schema({
     _id: {
-        type: ObjectId,
-        required: true,
-        default: () => new ObjectId(),
+        type: ObjectId
+      },
+      id:{
+        type: String,
+        required: function () {
+          return this.userType === "intern"; 
+        },
+        maxlength: 8
       },
 
     email:{
@@ -24,11 +29,14 @@ const userSchema = new mongoose.Schema({
     },
     phoneNumber:{
         type: String,
-        required: true
+        required: true,
+        maxlength: 10
     },
     avatarUrl: {
         type: String,
-        required: true
+        required: function () {
+            return this.userType === "intern"; 
+          },
     }, 
     city: {
         type: String,
@@ -64,11 +72,17 @@ const userSchema = new mongoose.Schema({
     description:{
         type:String,
         required: false,
-        maxlength: 100, 
+        maxlength: 200, 
     },
     refresh_tokens:{
         type: [String]
     },
+    partnerID:{
+        type: String,
+        required: function () {
+          return this.userType === "intern"; 
+        },
+    }
 });
 
 export = mongoose.model('User',userSchema)

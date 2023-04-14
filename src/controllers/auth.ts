@@ -2,6 +2,7 @@ import User from '../models/user_model'
 import {NextFunction, Request, Response} from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
 function sendError(res:Response, error:string){
     res.status(400).send({
@@ -163,71 +164,187 @@ const authenticateMiddleware = async (req: Request, res: Response, next: NextFun
     }
 };
 
+const registerIntern = async (req:Request ,res:Response)=>{
+    console.log("Im here Intern");
+    const email = req.body.email
+    const password = req.body.password
+    const phoneNumber=req.body.phoneNumber
+    const city =req.body.city
+    const GPA=req.body.GPA
+    const id=req.body.id
+    const name=req.body.name
+    const avatarUrl=req.body.avatarUrl
+    const userType=req.body.userType
+    const educationalInstitution=req.body.institution
+    const typeOfInternship=req.body.specialization
+    const description=req.body.description
+    const partnerID=req.body.partnerID
+    console.log(educationalInstitution);
+    console.log(typeOfInternship);
+    console.log(description);
+
+    if (email == null || password == null){
+        return sendError(res, 'please provide valid email and password')
+    }
+
+    try{
+        console.log('Im try');
+        const user = await User.findOne({'email' : email})
+        if (user != null){
+            return sendError(res,'user already registered, try a different name')
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const encryptedPwd = await bcrypt.hash(password,salt)
+        
+        const newUser = new User({
+            _id: new mongoose.Types.ObjectId(),
+            'email': email,
+            'password': encryptedPwd,
+            'GPA':GPA,
+            'city':city,
+            'phoneNumber':phoneNumber,
+            'id':id,
+            'name':name,
+            'avatarUrl':avatarUrl,
+            'userType':userType,
+            'educationalInstitution':educationalInstitution,
+            'typeOfInternship':typeOfInternship,
+            'description':description,
+            'partnerID':partnerID
+
+        })
+    await newUser.save()
+    console.log('succes Register '+newUser);
+    return res.status(200).send({
+        'email' : email,
+        '_id' : newUser._id
+    })
+    
+}
+    catch(err){
+        console.log(err);
+        return sendError(res,'fail ...')
+    }
+}
+const registerHospital = async (req:Request ,res:Response)=>{
+    console.log("Im here");
+    const email = req.body.email
+    const password = req.body.password
+    const phoneNumber=req.body.phoneNumber
+    const city =req.body.city
+    const name=req.body.name
+    const userType=req.body.userType
+    const description=req.body.description
+    const hospitalQuantity=req.body.hospitalQuantity
+ 
+    console.log(description);
+   
+
+
+    if (email == null || password == null){
+        return sendError(res, 'please provide valid email and password')
+    }
+
+    try{
+        console.log('Im try');
+        const user = await User.findOne({'email' : email})
+        if (user != null){
+            return sendError(res,'user already registered, try a different name')
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const encryptedPwd = await bcrypt.hash(password,salt)
+        const newUser = new User({
+            _id: new mongoose.Types.ObjectId(),
+            'email': email,
+            'password': encryptedPwd,
+            'city':city,
+            'phoneNumber':phoneNumber,
+            'name':name,
+            'userType':userType,
+            'description':description,
+            'hospitalQuantity':hospitalQuantity
+
+        })
+    await newUser.save()
+    console.log('succes Register '+newUser);
+    return res.status(200).send({
+        'email' : email,
+        '_id' : newUser._id
+    })
+    
+}
+    catch(err){
+        console.log(err);
+        return sendError(res,'fail ...')
+    }
+}
 ///////////////////////////////////////////////////////////////////////////
-const register= async (req: Request, res: Response) => {
-    const { email, password, name, phoneNumber, avatarUrl, city, userType, description } = req.body;
+// const register= async (req: Request, res: Response) => {
+//     console.log(`Register Success User name ${req.body.name}`);
+//     const { email, password, name, phoneNumber
+//         , city, userType, description } = req.body;
   
-    if (!email || !password || !name || !phoneNumber || !avatarUrl || !city) {
-      return res.status(400).send({ error: "Please provide valid values" });
-    }
+//     if (!email || !password || !name || !phoneNumber || !city) {
+//       return res.status(400).send({ error: "Please provide valid values" });
+//     }
   
-    try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res.status(409).send({ error: "User already exists" });
-      }
+//     try {
+//       const existingUser = await User.findOne({ email });
+//       if (existingUser) {
+//         return res.status(409).send({ error: "User already exists" });
+//       }
   
-      const salt = await bcrypt.genSalt(10);
-      const encryptedPassword = await bcrypt.hash(password, salt);
+//       const salt = await bcrypt.genSalt(10);
+//       const encryptedPassword = await bcrypt.hash(password, salt);
   
-      let user;
-      if (userType === "intern") {
-        const { educationalInstitution, typeOfInternship, GPA } = req.body;
-        if (!educationalInstitution || !typeOfInternship || !GPA) {
-          return res.status(400).send({ error: "Please provide valid values" });
-        }
-        user = new User({
-          email,
-          password: encryptedPassword,
-          name,
-          phoneNumber,
-          avatarUrl,
-          city,
-          userType,
-          educationalInstitution,
-          typeOfInternship,
-          GPA,
-          description,
-          refresh_tokens: [],
-        });
-      } else if (userType === "hospital") {
-        const { hospitalQuantity } = req.body;
-        if (!hospitalQuantity) {
-          return res.status(400).send({ error: "Please provide valid values" });
-        }
-        user = new User({
-          email,
-          password: encryptedPassword,
-          name,
-          phoneNumber,
-          avatarUrl,
-          city,
-          userType,
-          hospitalQuantity,
-          description,
-          refresh_tokens: [],
-        });
-      } else {
-        return res.status(400).send({ error: "Please provide a valid user type" });
-      }
+//       let user;
+//       if (userType === "intern") {
+//         const { educationalInstitution, typeOfInternship, GPA } = req.body;
+//         if (!educationalInstitution || !typeOfInternship || !GPA) {
+//           return res.status(400).send({ error: "Please provide valid values" });
+//         }
+//         user = new User({
+//           email,
+//           password: encryptedPassword,
+//           name,
+//           phoneNumber,
+//           city,
+//           userType,
+//           educationalInstitution,
+//           typeOfInternship,
+//           GPA,
+//           description,
+//           refresh_tokens: [],
+//         });
+//       } else if (userType === "hospital") {
+//         const { hospitalQuantity } = req.body;
+//         // if (!hospitalQuantity) {
+//         //   return res.status(400).send({ error: "Please provide valid values" });
+//         // }
+//         user = new User({
+//           email,
+//           password: encryptedPassword,
+//           name,
+//           phoneNumber,
+//           city,
+//           userType,
+//           hospitalQuantity,
+//           description,
+//           refresh_tokens: [],
+//         });
+//       } else {
+//         return res.status(400).send({ error: "Please provide a valid user type" });
+//       }
   
-      await user.save();
-      res.status(201).send({ message: "User registered successfully" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send({ error: "Failed to register user" });
-    }
-  };
+//       await user.save();
+//       res.status(201).send({ message: "User registered successfully" });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).send({ error: "Failed to register user" });
+//     }
+//   };
   
 
-export = {login ,refresh , logout, authenticateMiddleware,register}
+export = {login ,refresh , logout, authenticateMiddleware,registerIntern,registerHospital}

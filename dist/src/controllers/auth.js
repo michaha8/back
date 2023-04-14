@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const user_model_1 = __importDefault(require("../models/user_model"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const mongoose_1 = __importDefault(require("mongoose"));
 function sendError(res, error) {
     res.status(400).send({
         'error': error
@@ -150,68 +151,107 @@ const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, voi
         return sendError(res, 'Failed to validate token');
     }
 });
-///////////////////////////////////////////////////////////////////////////
-const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password, name, phoneNumber, avatarUrl, city, userType, description } = req.body;
-    if (!email || !password || !name || !phoneNumber || !avatarUrl || !city) {
-        return res.status(400).send({ error: "Please provide valid values" });
+const registerIntern = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Im here Intern");
+    const email = req.body.email;
+    const password = req.body.password;
+    const phoneNumber = req.body.phoneNumber;
+    const city = req.body.city;
+    const GPA = req.body.GPA;
+    const id = req.body.id;
+    const name = req.body.name;
+    const avatarUrl = req.body.avatarUrl;
+    const userType = req.body.userType;
+    const educationalInstitution = req.body.institution;
+    const typeOfInternship = req.body.specialization;
+    const description = req.body.description;
+    const partnerID = req.body.partnerID;
+    console.log(educationalInstitution);
+    console.log(typeOfInternship);
+    console.log(description);
+    if (email == null || password == null) {
+        return sendError(res, 'please provide valid email and password');
     }
     try {
-        const existingUser = yield user_model_1.default.findOne({ email });
-        if (existingUser) {
-            return res.status(409).send({ error: "User already exists" });
+        console.log('Im try');
+        const user = yield user_model_1.default.findOne({ 'email': email });
+        if (user != null) {
+            return sendError(res, 'user already registered, try a different name');
         }
         const salt = yield bcrypt_1.default.genSalt(10);
-        const encryptedPassword = yield bcrypt_1.default.hash(password, salt);
-        let user;
-        if (userType === "intern") {
-            const { educationalInstitution, typeOfInternship, GPA } = req.body;
-            if (!educationalInstitution || !typeOfInternship || !GPA) {
-                return res.status(400).send({ error: "Please provide valid values" });
-            }
-            user = new user_model_1.default({
-                email,
-                password: encryptedPassword,
-                name,
-                phoneNumber,
-                avatarUrl,
-                city,
-                userType,
-                educationalInstitution,
-                typeOfInternship,
-                GPA,
-                description,
-                refresh_tokens: [],
-            });
-        }
-        else if (userType === "hospital") {
-            const { hospitalQuantity } = req.body;
-            if (!hospitalQuantity) {
-                return res.status(400).send({ error: "Please provide valid values" });
-            }
-            user = new user_model_1.default({
-                email,
-                password: encryptedPassword,
-                name,
-                phoneNumber,
-                avatarUrl,
-                city,
-                userType,
-                hospitalQuantity,
-                description,
-                refresh_tokens: [],
-            });
-        }
-        else {
-            return res.status(400).send({ error: "Please provide a valid user type" });
-        }
-        yield user.save();
-        res.status(201).send({ message: "User registered successfully" });
+        const encryptedPwd = yield bcrypt_1.default.hash(password, salt);
+        const newUser = new user_model_1.default({
+            _id: new mongoose_1.default.Types.ObjectId(),
+            'email': email,
+            'password': encryptedPwd,
+            'GPA': GPA,
+            'city': city,
+            'phoneNumber': phoneNumber,
+            'id': id,
+            'name': name,
+            'avatarUrl': avatarUrl,
+            'userType': userType,
+            'educationalInstitution': educationalInstitution,
+            'typeOfInternship': typeOfInternship,
+            'description': description,
+            'partnerID': partnerID
+        });
+        yield newUser.save();
+        console.log('succes Register ' + newUser);
+        return res.status(200).send({
+            'email': email,
+            '_id': newUser._id
+        });
     }
-    catch (error) {
-        console.error(error);
-        res.status(500).send({ error: "Failed to register user" });
+    catch (err) {
+        console.log(err);
+        return sendError(res, 'fail ...');
     }
 });
-module.exports = { login, refresh, logout, authenticateMiddleware, register };
+const registerHospital = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Im here");
+    const email = req.body.email;
+    const password = req.body.password;
+    const phoneNumber = req.body.phoneNumber;
+    const city = req.body.city;
+    const name = req.body.name;
+    const userType = req.body.userType;
+    const description = req.body.description;
+    const hospitalQuantity = req.body.hospitalQuantity;
+    console.log(description);
+    if (email == null || password == null) {
+        return sendError(res, 'please provide valid email and password');
+    }
+    try {
+        console.log('Im try');
+        const user = yield user_model_1.default.findOne({ 'email': email });
+        if (user != null) {
+            return sendError(res, 'user already registered, try a different name');
+        }
+        const salt = yield bcrypt_1.default.genSalt(10);
+        const encryptedPwd = yield bcrypt_1.default.hash(password, salt);
+        const newUser = new user_model_1.default({
+            _id: new mongoose_1.default.Types.ObjectId(),
+            'email': email,
+            'password': encryptedPwd,
+            'city': city,
+            'phoneNumber': phoneNumber,
+            'name': name,
+            'userType': userType,
+            'description': description,
+            'hospitalQuantity': hospitalQuantity
+        });
+        yield newUser.save();
+        console.log('succes Register ' + newUser);
+        return res.status(200).send({
+            'email': email,
+            '_id': newUser._id
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return sendError(res, 'fail ...');
+    }
+});
+module.exports = { login, refresh, logout, authenticateMiddleware, registerIntern, registerHospital };
 //# sourceMappingURL=auth.js.map

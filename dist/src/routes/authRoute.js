@@ -68,7 +68,8 @@ const auth_1 = __importDefault(require("../controllers/auth"));
  *                 type: string
  *                 description: The error description
  */
-router.post('/register', auth_1.default.register);
+router.post('/registerIntern', auth_1.default.registerIntern);
+router.post('/registerHospital', auth_1.default.registerHospital);
 /**
  * @swagger
  * /auth/login:
