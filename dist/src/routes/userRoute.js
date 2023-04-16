@@ -32,6 +32,7 @@ const router = express_1.default.Router();
  */
 router.get('/email/:email', user_1.default.getUserTypeByEmail);
 router.get('/:id', user_1.default.getUserById);
+router.get('/', user_1.default.getAllInternsUsers);
 // Define the catch-all route last
 router.get('*', (req, res) => {
     res.status(404).send('Not found');

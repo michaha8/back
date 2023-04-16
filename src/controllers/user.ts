@@ -8,8 +8,11 @@ function sendError(res:Response, error:string){
     })
 }
 const getUserById = async (req: Request,res: Response)=>{
-    console.log(req.params.id)
     console.log('in here GetUserByID')
+    console.log('in here GetUserByID')
+    console.log('in here GetUserByID')
+    console.log('in here GetUserByID')
+    
     try{
         const user = await User.findById(req.params.id)
         console.log(user)
@@ -20,6 +23,17 @@ const getUserById = async (req: Request,res: Response)=>{
     }
 }
 
+const getAllInternsUsers = async (req: Request,res: Response) => {
+    console.log("getAllInternsUsers");
+    try {
+      const users = await User.find({ userType: 'intern' })
+      console.log('users-GetAllUsers');
+      console.log(users);
+      res.status(200).send(users)
+    } catch(err) {
+      res.status(400).send({'error': 'Failed to get users from DB'})
+    }
+  }
 const getUserTypeByEmail=async(req:Request,res:Response)=>{
     console.log(req.params.email)
     console.log('Email '+ req.params.email)
@@ -81,4 +95,4 @@ const upadteUserIntern = async (req: Request,res: Response)=>{
 }
 
 
-export = {getUserById,upadteUserIntern,getUserTypeByEmail}
+export = {getUserById,upadteUserIntern,getUserTypeByEmail,getAllInternsUsers}

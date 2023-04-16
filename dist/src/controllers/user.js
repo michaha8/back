@@ -18,7 +18,9 @@ function sendError(res, error) {
     });
 }
 const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.params.id);
+    console.log('in here GetUserByID');
+    console.log('in here GetUserByID');
+    console.log('in here GetUserByID');
     console.log('in here GetUserByID');
     try {
         const user = yield user_model_1.default.findById(req.params.id);
@@ -27,6 +29,18 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (err) {
         res.status(400).send({ 'error': 'Failed to get user from DB' });
+    }
+});
+const getAllInternsUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("getAllInternsUsers");
+    try {
+        const users = yield user_model_1.default.find({ userType: 'intern' });
+        console.log('users-GetAllUsers');
+        console.log(users);
+        res.status(200).send(users);
+    }
+    catch (err) {
+        res.status(400).send({ 'error': 'Failed to get users from DB' });
     }
 });
 const getUserTypeByEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -84,5 +98,5 @@ const upadteUserIntern = (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(400).send({ err: err.message });
     }
 });
-module.exports = { getUserById, upadteUserIntern, getUserTypeByEmail };
+module.exports = { getUserById, upadteUserIntern, getUserTypeByEmail, getAllInternsUsers };
 //# sourceMappingURL=user.js.map
