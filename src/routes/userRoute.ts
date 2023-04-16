@@ -27,8 +27,13 @@ const router = express.Router()
  *       '404':
  *         description: User not found
  */
+router.get('/email/:email', user.getUserTypeByEmail)
 router.get('/:id', user.getUserById)
 
+// Define the catch-all route last
+router.get('*', (req, res) => {
+    res.status(404).send('Not found');
+  });
 /**
  * @swagger
  * /user:
@@ -50,6 +55,6 @@ router.get('/:id', user.getUserById)
  *       '404':
  *         description: User not found
  */
-router.put('/',user.upadteUser)
+router.put('/',user.upadteUserIntern)
 
 export = router

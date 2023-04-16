@@ -30,7 +30,12 @@ const router = express_1.default.Router();
  *       '404':
  *         description: User not found
  */
+router.get('/email/:email', user_1.default.getUserTypeByEmail);
 router.get('/:id', user_1.default.getUserById);
+// Define the catch-all route last
+router.get('*', (req, res) => {
+    res.status(404).send('Not found');
+});
 /**
  * @swagger
  * /user:
@@ -52,6 +57,6 @@ router.get('/:id', user_1.default.getUserById);
  *       '404':
  *         description: User not found
  */
-router.put('/', user_1.default.upadteUser);
+router.put('/', user_1.default.upadteUserIntern);
 module.exports = router;
 //# sourceMappingURL=userRoute.js.map

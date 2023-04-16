@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     _id: {
         type: ObjectId
       },
-      id:{
+      idIntern:{
         type: String,
         required: function () {
           return this.userType === "intern"; 

@@ -8,7 +8,7 @@ const userSchema = new mongoose_1.default.Schema({
     _id: {
         type: ObjectId
     },
-    id: {
+    idIntern: {
         type: String,
         required: function () {
             return this.userType === "intern";

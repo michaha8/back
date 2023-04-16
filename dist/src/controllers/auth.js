@@ -158,7 +158,7 @@ const registerIntern = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const phoneNumber = req.body.phoneNumber;
     const city = req.body.city;
     const GPA = req.body.GPA;
-    const id = req.body.id;
+    const id = req.body.idIntern;
     const name = req.body.name;
     const avatarUrl = req.body.avatarUrl;
     const userType = req.body.userType;
@@ -169,11 +169,13 @@ const registerIntern = (req, res) => __awaiter(void 0, void 0, void 0, function*
     console.log(educationalInstitution);
     console.log(typeOfInternship);
     console.log(description);
+    console.log(req.body);
     if (email == null || password == null) {
         return sendError(res, 'please provide valid email and password');
     }
     try {
         console.log('Im try');
+        console.log(req.body.idIntern);
         const user = yield user_model_1.default.findOne({ 'email': email });
         if (user != null) {
             return sendError(res, 'user already registered, try a different name');
@@ -187,7 +189,7 @@ const registerIntern = (req, res) => __awaiter(void 0, void 0, void 0, function*
             'GPA': GPA,
             'city': city,
             'phoneNumber': phoneNumber,
-            'id': id,
+            'idIntern': id,
             'name': name,
             'avatarUrl': avatarUrl,
             'userType': userType,

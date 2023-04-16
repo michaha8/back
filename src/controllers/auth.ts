@@ -171,7 +171,7 @@ const registerIntern = async (req:Request ,res:Response)=>{
     const phoneNumber=req.body.phoneNumber
     const city =req.body.city
     const GPA=req.body.GPA
-    const id=req.body.id
+    const id=req.body.idIntern
     const name=req.body.name
     const avatarUrl=req.body.avatarUrl
     const userType=req.body.userType
@@ -182,6 +182,7 @@ const registerIntern = async (req:Request ,res:Response)=>{
     console.log(educationalInstitution);
     console.log(typeOfInternship);
     console.log(description);
+    console.log(req.body);
 
     if (email == null || password == null){
         return sendError(res, 'please provide valid email and password')
@@ -189,6 +190,7 @@ const registerIntern = async (req:Request ,res:Response)=>{
 
     try{
         console.log('Im try');
+        console.log(req.body.idIntern);
         const user = await User.findOne({'email' : email})
         if (user != null){
             return sendError(res,'user already registered, try a different name')
@@ -204,7 +206,7 @@ const registerIntern = async (req:Request ,res:Response)=>{
             'GPA':GPA,
             'city':city,
             'phoneNumber':phoneNumber,
-            'id':id,
+            'idIntern':id,
             'name':name,
             'avatarUrl':avatarUrl,
             'userType':userType,
