@@ -166,6 +166,7 @@ const registerIntern = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const typeOfInternship = req.body.specialization;
     const description = req.body.description;
     const partnerID = req.body.partnerID;
+    const preferenceArray = req.body.preferenceArray;
     console.log(educationalInstitution);
     console.log(typeOfInternship);
     console.log(description);
@@ -196,7 +197,8 @@ const registerIntern = (req, res) => __awaiter(void 0, void 0, void 0, function*
             'educationalInstitution': educationalInstitution,
             'typeOfInternship': typeOfInternship,
             'description': description,
-            'partnerID': partnerID
+            'partnerID': partnerID,
+            'preferenceArray': preferenceArray
         });
         yield newUser.save();
         console.log('succes Register ' + newUser);

@@ -75,6 +75,7 @@ const upadteUserIntern = (req, res) => __awaiter(void 0, void 0, void 0, functio
     const partnerID = req.body.partnerID;
     const phoneNumber = req.body.phoneNumber;
     const idIntern = req.body.idIntern;
+    const preferenceArray = req.body.preferenceArray;
     try {
         const user = yield user_model_1.default.findByIdAndUpdate(id, {
             $set: {
@@ -88,7 +89,8 @@ const upadteUserIntern = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 GPA,
                 description,
                 partnerID,
-                phoneNumber
+                phoneNumber,
+                preferenceArray
             }
         });
         yield user.save();

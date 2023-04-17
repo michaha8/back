@@ -1,6 +1,6 @@
 import User from '../models/user_model'
 import {Request, Response} from 'express'
-import { rawListeners } from '../server'
+
 
 function sendError(res:Response, error:string){
     res.status(400).send({
@@ -67,7 +67,8 @@ const upadteUserIntern = async (req: Request,res: Response)=>{
     const  description=req.body.description
     const  partnerID=req.body.partnerID  
     const  phoneNumber=req.body.phoneNumber   
-    const idIntern=req.body.idIntern 
+    const idIntern=req.body.idIntern
+    const preferenceArray=req.body.preferenceArray 
   
 
     try {
@@ -83,7 +84,8 @@ const upadteUserIntern = async (req: Request,res: Response)=>{
                 GPA,
                 description,
                 partnerID,
-                phoneNumber
+                phoneNumber,
+                preferenceArray
             }
         });
 

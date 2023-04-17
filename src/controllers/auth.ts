@@ -179,6 +179,7 @@ const registerIntern = async (req:Request ,res:Response)=>{
     const typeOfInternship=req.body.specialization
     const description=req.body.description
     const partnerID=req.body.partnerID
+    const preferenceArray=req.body.preferenceArray
     console.log(educationalInstitution);
     console.log(typeOfInternship);
     console.log(description);
@@ -213,7 +214,8 @@ const registerIntern = async (req:Request ,res:Response)=>{
             'educationalInstitution':educationalInstitution,
             'typeOfInternship':typeOfInternship,
             'description':description,
-            'partnerID':partnerID
+            'partnerID':partnerID,
+            'preferenceArray':preferenceArray
 
         })
     await newUser.save()

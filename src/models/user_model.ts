@@ -10,7 +10,6 @@ const userSchema = new mongoose.Schema({
         required: function () {
           return this.userType === "intern"; 
         },
-        maxlength: 8
       },
 
     email:{
@@ -30,7 +29,6 @@ const userSchema = new mongoose.Schema({
     phoneNumber:{
         type: String,
         required: true,
-        maxlength: 10
     },
     avatarUrl: {
         type: String,
@@ -72,7 +70,6 @@ const userSchema = new mongoose.Schema({
     description:{
         type:String,
         required: false,
-        maxlength: 200, 
     },
     refresh_tokens:{
         type: [String]
@@ -82,7 +79,8 @@ const userSchema = new mongoose.Schema({
         required: function () {
           return this.userType === "intern"; 
         },
-    }
+    },
+    preferenceArray: {type:[String],required: false,}
 });
 
 export = mongoose.model('User',userSchema)

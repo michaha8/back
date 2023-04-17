@@ -13,7 +13,6 @@ const userSchema = new mongoose_1.default.Schema({
         required: function () {
             return this.userType === "intern";
         },
-        maxlength: 8
     },
     email: {
         type: String,
@@ -30,7 +29,6 @@ const userSchema = new mongoose_1.default.Schema({
     phoneNumber: {
         type: String,
         required: true,
-        maxlength: 10
     },
     avatarUrl: {
         type: String,
@@ -72,7 +70,6 @@ const userSchema = new mongoose_1.default.Schema({
     description: {
         type: String,
         required: false,
-        maxlength: 200,
     },
     refresh_tokens: {
         type: [String]
@@ -82,7 +79,8 @@ const userSchema = new mongoose_1.default.Schema({
         required: function () {
             return this.userType === "intern";
         },
-    }
+    },
+    preferenceArray: { type: [String], required: false, }
 });
 module.exports = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=user_model.js.map
