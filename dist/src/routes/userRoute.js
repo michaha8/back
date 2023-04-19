@@ -32,7 +32,10 @@ const router = express_1.default.Router();
  */
 router.get('/email/:email', user_1.default.getUserTypeByEmail);
 router.get('/:id', user_1.default.getUserById);
+router.get('/idIntern/:idIntern', user_1.default.getUserByIdIntern);
+// router.get('/', user.getAllInternsUsers)
 router.get('/', user_1.default.getAllInternsUsers);
+router.get('/hospital/getAllHospitals', user_1.default.getAllHospitalsUsers);
 // Define the catch-all route last
 router.get('*', (req, res) => {
     res.status(404).send('Not found');

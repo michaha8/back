@@ -29,8 +29,10 @@ const router = express.Router()
  */
 router.get('/email/:email', user.getUserTypeByEmail)
 router.get('/:id', user.getUserById)
-
+router.get('/idIntern/:idIntern', user.getUserByIdIntern);
+// router.get('/', user.getAllInternsUsers)
 router.get('/', user.getAllInternsUsers)
+router.get('/hospital/getAllHospitals', user.getAllHospitalsUsers)
 
 // Define the catch-all route last
 router.get('*', (req, res) => {

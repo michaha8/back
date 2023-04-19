@@ -241,6 +241,7 @@ const registerHospital = async (req:Request ,res:Response)=>{
     const userType=req.body.userType
     const description=req.body.description
     const hospitalQuantity=req.body.hospitalQuantity
+    const preferenceArray=req.body.preferenceArray
  
     console.log(description);
    
@@ -268,7 +269,9 @@ const registerHospital = async (req:Request ,res:Response)=>{
             'name':name,
             'userType':userType,
             'description':description,
-            'hospitalQuantity':hospitalQuantity
+            'hospitalQuantity':hospitalQuantity,
+            'preferenceArray':preferenceArray
+
 
         })
     await newUser.save()

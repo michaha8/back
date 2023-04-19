@@ -222,6 +222,7 @@ const registerHospital = (req, res) => __awaiter(void 0, void 0, void 0, functio
     const userType = req.body.userType;
     const description = req.body.description;
     const hospitalQuantity = req.body.hospitalQuantity;
+    const preferenceArray = req.body.preferenceArray;
     console.log(description);
     if (email == null || password == null) {
         return sendError(res, 'please provide valid email and password');
@@ -243,7 +244,8 @@ const registerHospital = (req, res) => __awaiter(void 0, void 0, void 0, functio
             'name': name,
             'userType': userType,
             'description': description,
-            'hospitalQuantity': hospitalQuantity
+            'hospitalQuantity': hospitalQuantity,
+            'preferenceArray': preferenceArray
         });
         yield newUser.save();
         console.log('succes Register ' + newUser);
