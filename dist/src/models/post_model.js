@@ -4,18 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const mongoose_1 = __importDefault(require("mongoose"));
 const postSchema = new mongoose_1.default.Schema({
-    message: {
-        type: String,
-        required: true
-    },
     sender: {
         type: String,
         required: true
     },
-    avatarUrl: {
-        type: String,
-        required: true
-    }
 });
-module.exports = mongoose_1.default.model('Post', postSchema);
+module.exports = mongoose_1.default.model('ForgetPasswordRequest', postSchema);
 //# sourceMappingURL=post_model.js.map

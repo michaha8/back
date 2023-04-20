@@ -60,7 +60,6 @@ describe("Posts Tests", () => {
         });
         const response = yield (0, supertest_1.default)(server_1.default).get(`/post/${post._id}`);
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(post.message);
         expect(response.body.sender).toEqual(post.sender);
     }));
     test("Get all posts event", () => __awaiter(void 0, void 0, void 0, function* () {

@@ -55,7 +55,6 @@ describe("Posts Tests", ()=>{
       
         const response = await request(app).get(`/post/${post._id}`);
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(post.message);
         expect(response.body.sender).toEqual(post.sender);
       });
       test("Get all posts event", async () => {
