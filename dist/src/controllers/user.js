@@ -376,11 +376,21 @@ const runTabuSearchAlgorithm = (req, res) => __awaiter(void 0, void 0, void 0, f
             }
         }
         const bestMatching = tabuSearch(interns, hospitals, 100, 10).matching;
+        console.log("BestMatching");
+        console.log(bestMatching);
         // Update the matchingArray of all the interns
         const internNames = interns.map(intern => intern.name);
         const updateInternPromises = [];
         for (const internName of internNames) {
-            updateInternPromises.push(user_model_1.default.updateOne({ name: internName }, { $set: { "matchingArray.1": bestMatching[internName] } }));
+            const matchingArrayValue = [];
+            for (const hospitalName in bestMatching) {
+                if (Object.prototype.hasOwnProperty.call(bestMatching, hospitalName)) {
+                    if (bestMatching[hospitalName].includes(internName)) {
+                        matchingArrayValue.push(hospitalName);
+                    }
+                }
+            }
+            updateInternPromises.push(user_model_1.default.updateOne({ name: internName }, { $set: { matchingArrayTabuSearch: matchingArrayValue } }));
         }
         Promise.all(updateInternPromises).then(() => {
             console.log('Matching arrays of all the interns updated successfully');
@@ -393,7 +403,7 @@ const runTabuSearchAlgorithm = (req, res) => __awaiter(void 0, void 0, void 0, f
         for (const hospitalName of hospitalNames) {
             const internNames = bestMatching[hospitalName];
             const matchingArrayValue = internNames.length > 0 ? internNames : null;
-            updateHospitalPromises.push(user_model_1.default.updateOne({ name: hospitalName }, { $set: { matchingArray: matchingArrayValue } }));
+            updateHospitalPromises.push(user_model_1.default.updateOne({ name: hospitalName }, { $set: { matchingArrayTabuSearch: matchingArrayValue } }));
         }
         Promise.all(updateHospitalPromises).then(() => {
             console.log('Matching arrays of all the hospitals updated successfully');

@@ -404,24 +404,33 @@ Promise.all(updateHospitalPromises).then(() => {
         }
     }
       const bestMatching = tabuSearch(interns, hospitals, 100, 10).matching;
+    console.log("BestMatching");
+    console.log(bestMatching);
     
-      // Update the matchingArray of all the interns
-      const internNames = interns.map(intern => intern.name);
-      const updateInternPromises = [];
-      for (const internName of internNames) {
-        updateInternPromises.push(
-          User.updateOne(
-            { name: internName },
-            { $set: { "matchingArray.1": bestMatching[internName] } }
-          )
-        );
+   // Update the matchingArray of all the interns
+const internNames = interns.map(intern => intern.name);
+const updateInternPromises = [];
+for (const internName of internNames) {
+  const matchingArrayValue = [];
+  for (const hospitalName in bestMatching) {
+    if (Object.prototype.hasOwnProperty.call(bestMatching, hospitalName)) {
+      if (bestMatching[hospitalName].includes(internName)) {
+        matchingArrayValue.push(hospitalName);
       }
-      Promise.all(updateInternPromises).then(() => {
-        console.log('Matching arrays of all the interns updated successfully');
-      }).catch(err => {
-        console.error('Error while updating matching arrays of all the interns:', err);
-      });
-  
+    }
+  }
+  updateInternPromises.push(
+    User.updateOne(
+      { name: internName },
+      { $set: { matchingArrayTabuSearch: matchingArrayValue } }
+    )
+  );
+}
+Promise.all(updateInternPromises).then(() => {
+  console.log('Matching arrays of all the interns updated successfully');
+}).catch(err => {
+  console.error('Error while updating matching arrays of all the interns:', err);
+});
       // Update the matchingArray of all the hospitals
 const hospitalNames = hospitals.map(hospital => hospital.name);
 const updateHospitalPromises = [];
@@ -431,7 +440,7 @@ for (const hospitalName of hospitalNames) {
   updateHospitalPromises.push(
     User.updateOne(
       { name: hospitalName },
-      { $set: { matchingArray: matchingArrayValue } }
+      { $set: { matchingArrayTabuSearch: matchingArrayValue } }
     )
   );
 }
