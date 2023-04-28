@@ -81,6 +81,8 @@ const userSchema = new mongoose.Schema({
         },
     },
     preferenceArray: {type:[String],required: false,}
+    ,
+    matchingArray:{type:[String],required:false}
 });
 
 export = mongoose.model('User',userSchema)

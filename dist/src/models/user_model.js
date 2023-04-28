@@ -80,7 +80,8 @@ const userSchema = new mongoose_1.default.Schema({
             return this.userType === "intern";
         },
     },
-    preferenceArray: { type: [String], required: false, }
+    preferenceArray: { type: [String], required: false, },
+    matchingArray: { type: [String], required: false }
 });
 module.exports = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=user_model.js.map

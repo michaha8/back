@@ -33,7 +33,8 @@ router.get('/idIntern/:idIntern', user.getUserByIdIntern);
 // router.get('/', user.getAllInternsUsers)
 router.get('/', user.getAllInternsUsers)
 router.get('/hospital/getAllHospitals', user.getAllHospitalsUsers)
-
+router.get('/algorithm/runAlgorithm',user.runMatchingAlgorithm)
+router.get('/algorithm/runTabuSearchAlgorithm',user.runTabuSearchAlgorithm)
 // Define the catch-all route last
 router.get('*', (req, res) => {
     res.status(404).send('Not found');

@@ -21,7 +21,9 @@ import authRouter from './routes/authRoute'
 import fileRoute from './routes/fileRoute'
 import userRoute from './routes/userRoute'
 
+
 app.use('/post',postRouter)
+
 app.use('/',indexRouter)
 app.use('/auth',authRouter)
 app.use('/file',fileRoute)
