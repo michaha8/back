@@ -71,34 +71,121 @@ const getUserByIdIntern=async(req:Request,res:Response)=>{
     }
 }
 
+// const upadteUserIntern = async (req: Request,res: Response)=>{
+//     console.log('id'+req.body.id)
+//     console.log(req.body.name)
+//     console.log("UpdateUser")
+//     console.log(req.body.userType)
+//     console.log(req.body)
+       
+// if(req.body.userType==='intern'){
+//     console.log("UpdateUser Intern")
+//     const name= req.body.name;
+//     const avatarUrl = req.body.avatarUrl;
+//     const id = req.body.id;
+//     console.log(id);
+//     const email=req.body.email
+//     const  city=req.body.city
+//     const  educationalInstitution =req.body.educationalInstitution
+//     const  typeOfInternship=req.body.typeOfInternship
+//     const  GPA=req.body.GPA
+//     const  description=req.body.description
+//     const  partnerID=req.body.partnerID  
+//     const  phoneNumber=req.body.phoneNumber   
+//     const idIntern=req.body.idIntern
+//     const preferenceArray=req.body.preferenceArray 
+  
+
+//     try {
+//         const user = await User.findByIdAndUpdate(id, {
+//             $set: {
+//                 name,
+//                 idIntern,
+//                 avatarUrl,
+//                 email,
+//                 city,
+//                 educationalInstitution,
+//                 typeOfInternship,
+//                 GPA,
+//                 description,
+//                 partnerID,
+//                 phoneNumber,
+//                 preferenceArray
+//             }
+//         });
+
+//         await user.save();
+//         res.status(200).send({ msg: "Update succes", status: 200 });
+//     } catch (err) {
+//         res.status(400).send({ err: err.message })
+//     }
+// }else{
+//     console.log("UpdateUserHospital")
+//     const name= req.body.name;
+//     const id = req.body.id;
+  
+//     const email=req.body.email
+//     const  city=req.body.city
+//     const  description=req.body.description
+
+//     const  phoneNumber=req.body.phoneNumber   
+  
+//     const preferenceArray=req.body.preferenceArray 
+//     const hospitalQuantity=req.body.hospitalQuantity
+//   console.log(req.body);
+
+//     try {
+//         const user = await User.findByIdAndUpdate(id, {
+//             $set: {
+//                 name,
+//                 email,
+//                 city,
+//                 description,
+//                 phoneNumber,
+//                 hospitalQuantity,
+//                 preferenceArray
+//             }
+//         });
+
+//         await user.save();
+//         res.status(200).send({ msg: "Update succes", status: 200 });
+//     } catch (err) {
+//         res.status(400).send({ err: err.message })
+//     }
+// }
+// }
+
+
+//Algorithm 1 
 const upadteUserIntern = async (req: Request,res: Response)=>{
     console.log('id'+req.body.id)
     console.log(req.body.name)
     console.log("UpdateUser")
     console.log(req.body.userType)
     console.log(req.body)
-       
-if(req.body.userType==='intern'){
-    console.log("UpdateUser Intern")
-    const name= req.body.name;
-    const avatarUrl = req.body.avatarUrl;
-    const id = req.body.id;
-    console.log(id);
-    const email=req.body.email
-    const  city=req.body.city
-    const  educationalInstitution =req.body.educationalInstitution
-    const  typeOfInternship=req.body.typeOfInternship
-    const  GPA=req.body.GPA
-    const  description=req.body.description
-    const  partnerID=req.body.partnerID  
-    const  phoneNumber=req.body.phoneNumber   
-    const idIntern=req.body.idIntern
-    const preferenceArray=req.body.preferenceArray 
-  
 
-    try {
-        const user = await User.findByIdAndUpdate(id, {
-            $set: {
+    if(req.body.userType==='intern'){
+        console.log("UpdateUser Intern")
+        const name= req.body.name;
+        const avatarUrl = req.body.avatarUrl;
+        const id = req.body.id;
+        console.log(id);
+        const email=req.body.email
+        const  city=req.body.city
+        const  educationalInstitution =req.body.educationalInstitution
+        const  typeOfInternship=req.body.typeOfInternship
+        const  GPA=req.body.GPA
+        const  description=req.body.description
+        const  partnerID=req.body.partnerID  
+        const  phoneNumber=req.body.phoneNumber   
+        const idIntern=req.body.idIntern
+        const preferenceArray=req.body.preferenceArray 
+
+        try {
+            const user = await User.findById(id);
+            const prevPartnerID = user.partnerID;
+            const idInternThatUpdate=user.idIntern;
+            user.set({
                 name,
                 idIntern,
                 avatarUrl,
@@ -111,52 +198,63 @@ if(req.body.userType==='intern'){
                 partnerID,
                 phoneNumber,
                 preferenceArray
+            });
+            await user.save();
+            console.log(`prevPartnerID `+ prevPartnerID);
+            console.log(`PartnerID `+ partnerID);
+            console.log(upadteUserIntern);
+            // check if partnerID has changed
+            if (prevPartnerID !== partnerID) {
+                // update the partner's partnerID field
+                const partnerUser = await User.findOne({ idIntern: partnerID });
+                console.log(partnerUser);
+                if (partnerUser) {
+                    partnerUser.partnerID = idInternThatUpdate;
+                    await partnerUser.save();
+                }
             }
-        });
 
-        await user.save();
-        res.status(200).send({ msg: "Update succes", status: 200 });
-    } catch (err) {
-        res.status(400).send({ err: err.message })
-    }
-}else{
-    console.log("UpdateUserHospital")
-    const name= req.body.name;
-    const id = req.body.id;
-  
-    const email=req.body.email
-    const  city=req.body.city
-    const  description=req.body.description
+            res.status(200).send({ msg: "Update succes", status: 200 });
+        } catch (err) {
+            res.status(400).send({ err: err.message })
+        }
+    } else {
+        console.log("UpdateUserHospital")
+        const name= req.body.name;
+        const id = req.body.id;
+        const email=req.body.email
+        const  city=req.body.city
+        const  description=req.body.description
+        const  phoneNumber=req.body.phoneNumber   
+        const preferenceArray=req.body.preferenceArray 
+        const hospitalQuantity=req.body.hospitalQuantity
 
-    const  phoneNumber=req.body.phoneNumber   
-  
-    const preferenceArray=req.body.preferenceArray 
-    const hospitalQuantity=req.body.hospitalQuantity
-  console.log(req.body);
+        try {
+            const user = await User.findByIdAndUpdate(id, {
+                $set: {
+                    name,
+                    email,
+                    city,
+                    description,
+                    phoneNumber,
+                    hospitalQuantity,
+                    preferenceArray
+                }
+            });
 
-    try {
-        const user = await User.findByIdAndUpdate(id, {
-            $set: {
-                name,
-                email,
-                city,
-                description,
-                phoneNumber,
-                hospitalQuantity,
-                preferenceArray
-            }
-        });
-
-        await user.save();
-        res.status(200).send({ msg: "Update succes", status: 200 });
-    } catch (err) {
-        res.status(400).send({ err: err.message })
+            await user.save();
+            res.status(200).send({ msg: "Update succes", status: 200 });
+        } catch (err) {
+            res.status(400).send({ err: err.message })
+        }
     }
 }
-}
 
 
-//Algorithm 1 
+
+
+
+
 const getInternName = async (id) => {
     try {
       const intern = await User.findOne({ idIntern: id }, { name: 1, _id: 0 }).lean();
