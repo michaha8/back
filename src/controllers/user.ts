@@ -71,89 +71,7 @@ const getUserByIdIntern=async(req:Request,res:Response)=>{
     }
 }
 
-// const upadteUserIntern = async (req: Request,res: Response)=>{
-//     console.log('id'+req.body.id)
-//     console.log(req.body.name)
-//     console.log("UpdateUser")
-//     console.log(req.body.userType)
-//     console.log(req.body)
-       
-// if(req.body.userType==='intern'){
-//     console.log("UpdateUser Intern")
-//     const name= req.body.name;
-//     const avatarUrl = req.body.avatarUrl;
-//     const id = req.body.id;
-//     console.log(id);
-//     const email=req.body.email
-//     const  city=req.body.city
-//     const  educationalInstitution =req.body.educationalInstitution
-//     const  typeOfInternship=req.body.typeOfInternship
-//     const  GPA=req.body.GPA
-//     const  description=req.body.description
-//     const  partnerID=req.body.partnerID  
-//     const  phoneNumber=req.body.phoneNumber   
-//     const idIntern=req.body.idIntern
-//     const preferenceArray=req.body.preferenceArray 
-  
 
-//     try {
-//         const user = await User.findByIdAndUpdate(id, {
-//             $set: {
-//                 name,
-//                 idIntern,
-//                 avatarUrl,
-//                 email,
-//                 city,
-//                 educationalInstitution,
-//                 typeOfInternship,
-//                 GPA,
-//                 description,
-//                 partnerID,
-//                 phoneNumber,
-//                 preferenceArray
-//             }
-//         });
-
-//         await user.save();
-//         res.status(200).send({ msg: "Update succes", status: 200 });
-//     } catch (err) {
-//         res.status(400).send({ err: err.message })
-//     }
-// }else{
-//     console.log("UpdateUserHospital")
-//     const name= req.body.name;
-//     const id = req.body.id;
-  
-//     const email=req.body.email
-//     const  city=req.body.city
-//     const  description=req.body.description
-
-//     const  phoneNumber=req.body.phoneNumber   
-  
-//     const preferenceArray=req.body.preferenceArray 
-//     const hospitalQuantity=req.body.hospitalQuantity
-//   console.log(req.body);
-
-//     try {
-//         const user = await User.findByIdAndUpdate(id, {
-//             $set: {
-//                 name,
-//                 email,
-//                 city,
-//                 description,
-//                 phoneNumber,
-//                 hospitalQuantity,
-//                 preferenceArray
-//             }
-//         });
-
-//         await user.save();
-//         res.status(200).send({ msg: "Update succes", status: 200 });
-//     } catch (err) {
-//         res.status(400).send({ err: err.message })
-//     }
-// }
-// }
 
 
 //Algorithm 1 
@@ -406,7 +324,7 @@ Promise.all(updateHospitalPromises).then(() => {
       const bestMatching = tabuSearch(interns, hospitals, 100, 10).matching;
     console.log("BestMatching");
     console.log(bestMatching);
-    
+
    // Update the matchingArray of all the interns
 const internNames = interns.map(intern => intern.name);
 const updateInternPromises = [];
@@ -618,9 +536,42 @@ function chooseBestMove(tabuMoves, currentMatching, hospitals) {
     return bestMove;
 }
 
+async function checkIfAllInternsAddPreference(req: Request, res: Response) {
+    console.log("checkIfAllInternsAddPreference");
+    try {
+      const users = await User.find();
+      const internsWithoutPreferences = [];
+      const hospitalsWithoutPreferences = [];
+  
+      for (let i = 0; i < users.length; i++) {
+        if (users[i].preferenceArray.length === 0) {
+          if (users[i].userType === 'intern') {
+            internsWithoutPreferences.push(users[i]);
+          } else if (users[i].userType === 'hospital') {
+            hospitalsWithoutPreferences.push(users[i]);
+          }
+        }
+      }
+  
+      console.log(internsWithoutPreferences.length);
+      console.log(hospitalsWithoutPreferences.length);
+  
+      if (internsWithoutPreferences.length > 0 || hospitalsWithoutPreferences.length > 0) {
+        // There are users without preferences
+        res.status(400).send({
+          interns: internsWithoutPreferences,
+          hospitals: hospitalsWithoutPreferences
+        });
+      } else {
+        // All users have added preferences
+        res.status(200).send('All users have added preferences');
+      }
+    } catch (err) {
+      // Handle error
+      return { error: 'Failed to get users from DB' };
+    }
+  }
 
 
 
-
-
-export = {getUserById,upadteUserIntern,getUserTypeByEmail,getAllInternsUsers,getUserByIdIntern,getAllHospitalsUsers,runMatchingAlgorithm,runTabuSearchAlgorithm}
+export = {getUserById,upadteUserIntern,getUserTypeByEmail,getAllInternsUsers,getUserByIdIntern,getAllHospitalsUsers,runMatchingAlgorithm,runTabuSearchAlgorithm,checkIfAllInternsAddPreference}

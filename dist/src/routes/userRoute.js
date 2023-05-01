@@ -38,6 +38,7 @@ router.get('/', user_1.default.getAllInternsUsers);
 router.get('/hospital/getAllHospitals', user_1.default.getAllHospitalsUsers);
 router.get('/algorithm/runAlgorithm', user_1.default.runMatchingAlgorithm);
 router.get('/algorithm/runTabuSearchAlgorithm', user_1.default.runTabuSearchAlgorithm);
+router.get('/checkIfAllInternsAddPreference/checkIfAllInternsAddPreference', user_1.default.checkIfAllInternsAddPreference);
 // Define the catch-all route last
 router.get('*', (req, res) => {
     res.status(404).send('Not found');
