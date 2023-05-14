@@ -7,6 +7,7 @@ dotenv.config()
 import bodyParser from 'body-parser'
 app.use(bodyParser.urlencoded({ extended: true, limit: '1mb'}))
 app.use(bodyParser.json())
+import cors from 'cors';
 
 import mongoose from 'mongoose'
 mongoose.connect(process.env.DATABASE_URL) //,{ useNewUrlParser: true})
@@ -27,7 +28,7 @@ app.use('/auth',authRouter)
 app.use('/file',fileRoute)
 app.use('/user',userRoute)
 app.use('/src/uploads',express.static('src/uploads'))
-
+app.use(cors());
 import swaggerUI from "swagger-ui-express"
 import swaggerJsDoc from "swagger-jsdoc"
 

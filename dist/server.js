@@ -8,6 +8,7 @@ const http_1 = __importDefault(require("http"));
 const server = http_1.default.createServer(app);
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 app.use(body_parser_1.default.urlencoded({ extended: true, limit: '1mb' }));
 app.use(body_parser_1.default.json());
@@ -27,6 +28,7 @@ app.use('/auth', authRoute_1.default);
 app.use('/file', fileRoute_1.default);
 app.use('/user', userRoute_1.default);
 app.use('/src/uploads', express_1.default.static('src/uploads'));
+app.use((0, cors_1.default)());
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 if (process.env.NODE_ENV == "development") {
